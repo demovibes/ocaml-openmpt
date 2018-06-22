@@ -1,0 +1,58 @@
+# Copyright 2018 The Demovibes team
+# libopenmpt bindings for OCaml.
+#
+# by Greg Kennedy
+
+# $Id$
+
+OCAMLMAKEFILE = OCamlMakefile
+
+OCAMLFIND = @OCAMLFIND@
+OCAMLFIND_LDCONF = @OCAMLFIND_LDCONF@
+OCAMLC = @OCAMLC@
+OCAMLOPT = @OCAMLOPT@
+OCAMLBEST = @OCAMLBEST@
+OCAMLMKTOP = @OCAMLMKTOP@
+OCAMLMKLIB = @OCAMLMKLIB@
+OCAMLCP = @OCAMLCP@
+OCAMLDEP = @OCAMLDEP@
+OCAMLLEX = @OCAMLLEX@
+OCAMLYACC = @OCAMLYACC@
+OCAMLDOC = @OCAMLDOC@
+AR = @AR@
+LATEX = @LATEX@
+DVIPS = @DVIPS@
+PS2PDF = @PS2PDF@
+OCAMLLIBPATH = @CAMLLIBPATH@
+
+SOURCES = openmpt_stubs.c openmpt.mli openmpt.ml
+RES_CLIB_SUF = _stubs
+RESULT = openmpt
+LIBINSTALL_FILES = $(wildcard *.mli *.cmi *.cma *.cmxa *.cmx *.a *.so)
+OCAMLLDFLAGS =
+ACLIBS = @LIBS@ @OPENMPT_LIBS@
+LDFLAGS = @LDFLAGS@ @OPENMPT_LDFLAGS@
+CLIBS = $(ACLIBS:-l%=%)
+LIBDIRS = $(LDFLAGS:-L%=%)
+CC = @CC@
+CFLAGS = @CFLAGS@ @OPENMPT_CFLAGS@ -Wall -DCAML_NAME_SPACE
+CPPFLAGS = @CPPFLAGS@
+OCAMLDOCFLAGS = -stars
+NO_CUSTOM = yes
+OCAMLFLAGS = @OCAMLFLAGS@
+
+all: $(OCAMLBEST)
+
+byte: byte-code-library
+
+opt: native-code-library
+
+native-code-library: byte-code-library
+
+install: libinstall
+
+uninstall: libuninstall
+
+update: uninstall install
+
+-include $(OCAMLMAKEFILE)

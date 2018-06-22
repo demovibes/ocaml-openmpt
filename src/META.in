@@ -1,0 +1,6 @@
+name="openmpt"
+version="@VERSION@"
+description="Ocaml bindings to libopenmpt"
+requires="unix"
+archive(byte) = "openmpt.cma"
+archive(native) = "openmpt.cmxa"

@@ -1,23 +1,28 @@
-*.annot
-*.cmo
-*.cma
-*.cmi
-*.a
-*.o
-*.cmx
-*.cmxs
-*.cmxa
-
-# ocamlbuild working directory
-_build/
-
-# ocamlbuild targets
-*.byte
-*.native
-
-# oasis generated files
-setup.data
-setup.log
-
-# Merlin configuring file for Vim and Emacs
-.merlin
+Makefile
+aclocal.m4
+autom4te.cache/
+config.guess
+config.log
+config.status
+config.sub
+configure
+install-sh
+src/META
+src/Makefile
+src/._bcdi/
+src/._d/
+src/._ncdi/
+src/*.a
+src/*.cm*
+src/*.o
+src/*.so
+examples/META
+examples/Makefile
+examples/._bcdi/
+examples/._d/
+examples/._ncdi/
+examples/*.a
+examples/*.cm*
+examples/*.o
+examples/*.so
+.*sw*

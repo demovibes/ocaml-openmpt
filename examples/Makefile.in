@@ -1,0 +1,10 @@
+SOURCES = mod2wav.ml
+RESULT = mod2wav
+INCDIRS = ../src
+#OCAMLC = ocamlfind ocamlc -thread
+#OCAMLOPT = ocamlfind ocamlopt -thread
+LIBS = unix libopenmpt
+
+all: nc
+
+-include OCamlMakefile

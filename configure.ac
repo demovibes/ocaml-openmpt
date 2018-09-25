@@ -1,7 +1,7 @@
 # $Id$
 
 # check for one particular file of the sources 
-AC_INIT([ocaml-libopenmpt],[0.1.0],[kennedy.greg@gmail.com])
+AC_INIT([ocaml-openmpt],[0.1.0],[kennedy.greg@gmail.com])
 
 VERSION=$PACKAGE_VERSION
 AC_MSG_RESULT(configuring $PACKAGE_STRING)
@@ -15,6 +15,8 @@ PKG_CONFIG_CHECK_MODULE([libopenmpt])
 
 # substitutions to perform
 AC_SUBST(VERSION)
+#AC_SUBST(INC)
+#AC_SUBST(requires)
 
 # Finally create the Makefile and samples
 AC_CONFIG_FILES([Makefile],[chmod a-w Makefile])

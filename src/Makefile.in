@@ -25,9 +25,9 @@ AR = @AR@
 #PS2PDF = @PS2PDF@
 OCAMLLIBPATH = @CAMLLIBPATH@
 
-SOURCES = libopenmpt_stubs.c libopenmpt.mli libopenmpt.ml
+SOURCES = openmpt_stubs.c openmpt.mli openmpt.ml
 RES_CLIB_SUF = _stubs
-RESULT = libopenmpt
+RESULT = openmpt
 LIBINSTALL_FILES = $(wildcard *.mli *.cmi *.cma *.cmxa *.cmx *.a *.so)
 OCAMLLDFLAGS =
 ACLIBS = @LIBS@

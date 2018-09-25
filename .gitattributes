@@ -1,3 +1,4 @@
-README.md ident
-Makefile.in ident
-configure.ac ident
+README.md	ident
+Makefile.in	ident
+configure.ac	ident
+src/Makefile.in	ident

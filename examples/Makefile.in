@@ -1,9 +1,13 @@
+# Makefile for mod2wav.ml
+
+OCAMLC = @OCAMLC@
+OCAMLOPT = @OCAMLOPT@
+
 SOURCES = mod2wav.ml
 RESULT = mod2wav
+
 INCDIRS = ../src
-#OCAMLC = ocamlfind ocamlc -thread
-#OCAMLOPT = ocamlfind ocamlopt -thread
-LIBS = unix libopenmpt
+LIBS = unix openmpt
 
 all: nc
 

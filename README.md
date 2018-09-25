@@ -1,11 +1,11 @@
-OCaml-libopenmpt - OCaml bindings for libopenmpt
+OCaml-openmpt - OCaml bindings for libopenmpt
 =========================================
 
 Author: Greg Kennedy <kennedy.greg@gmail.com>
 
 Email: kennedy.greg@gmail.com
 
-Homepage: https://github.com/demovibes/ocaml-libopenmpt
+Homepage: https://github.com/demovibes/ocaml-openmpt
 
 Copyright (c) 2018 the Demovibes team.
 

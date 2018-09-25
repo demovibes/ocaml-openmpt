@@ -43,6 +43,9 @@ OCAMLFLAGS = @OCAMLFLAGS@
 
 all: $(OCAMLBEST)
 
+idl: openmpt.idl
+	camlidl -no-include openmpt.idl
+
 byte: byte-code-library
 
 opt: native-code-library

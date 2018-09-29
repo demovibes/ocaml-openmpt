@@ -19,32 +19,34 @@ OCAMLDEP = @OCAMLDEP@
 OCAMLLEX = @OCAMLLEX@
 OCAMLYACC = @OCAMLYACC@
 OCAMLDOC = @OCAMLDOC@
+CAMLIDL = @CAMLIDL@
 AR = @AR@
 #LATEX = @LATEX@
 #DVIPS = @DVIPS@
 #PS2PDF = @PS2PDF@
 OCAMLLIBPATH = @CAMLLIBPATH@
 
-SOURCES = openmpt_stubs.c openmpt.mli openmpt.ml
+SOURCES = openmpt.idl 
 RES_CLIB_SUF = _stubs
 RESULT = openmpt
 LIBINSTALL_FILES = $(wildcard *.mli *.cmi *.cma *.cmxa *.cmx *.a *.so)
 OCAMLLDFLAGS =
 ACLIBS = @LIBS@
-LDFLAGS = @LDFLAGS@
+LDFLAGS = @LDFLAGS@ -L$(OCAMLLIBPATH)
 CLIBS = $(ACLIBS:-l%=%)
 LIBDIRS = $(LDFLAGS:-L%=%)
 CC = @CC@
-CFLAGS = @CFLAGS@ -Wall -DCAML_NAME_SPACE
+CFLAGS = @CFLAGS@
 CPPFLAGS = @CPPFLAGS@
 OCAMLDOCFLAGS = -stars
 NO_CUSTOM = yes
+
+NOIDLHEADER = yes
+IDLFLAGS = -no-include
+
 OCAMLFLAGS = @OCAMLFLAGS@
 
 all: $(OCAMLBEST)
-
-idl: openmpt.idl
-	camlidl -no-include openmpt.idl
 
 byte: byte-code-library
 

@@ -3,6 +3,7 @@
  *  Greg Kennedy <kennedy.greg@gmail.com> and the Demovibes Team, 2018
  */
 
+// Include files for libopenmpt, plus the three types of streams
 quote(c, "#include <libopenmpt/libopenmpt.h>");
 quote(c, "#include <libopenmpt/libopenmpt_stream_callbacks_buffer.h>");
 quote(c, "#include <libopenmpt/libopenmpt_stream_callbacks_file.h>");
@@ -20,7 +21,6 @@ unsigned int openmpt_get_core_version();
 //void openmpt_free_string( [in] const char * str );
 
 // Get library related metadata.
-#if 0
 [string] const char * openmpt_get_string( [in,string] const char * key )
 	quote(dealloc, "openmpt_free_string(_res); ");
 
@@ -31,215 +31,93 @@ unsigned int openmpt_get_core_version();
 // Query whether a file extension is supported
 int openmpt_is_extension_supported( [in,string] const char * extension );
 
+/* error handling functions */
 /*
-// Seek to the given offset relative to the beginning of the file.
-#define OPENMPT_STREAM_SEEK_SET 0
-// Seek to the given offset relative to the current position in the file.
-#define OPENMPT_STREAM_SEEK_CUR 1
-// Seek to the given offset relative to the end of the file.
-#define OPENMPT_STREAM_SEEK_END 2
-*/
-
-/* NOTE
- *  The next function pointer typedefs are supposed to allow you to supply a "custom" function
- *  to read, seek, or tell in a module.  For example, you could use it to read from a ZIP file
- *  or network stream.  However, this is tricky to do via OCaml... so it is not supported here.
- *
- * As an alternative, there are pre-built functions for doing file, filedescriptor, and memory-buffer
- *  reading of a module file.  Use one of these instead.
- */
-
-//typedef size_t (*openmpt_stream_read_func)( void * stream, void * dst, size_t bytes );
-//typedef int (*openmpt_stream_seek_func)( void * stream, int64 offset, int whence );
-//typedef int64 (*openmpt_stream_tell_func)( void * stream );
-/*
-typedef struct openmpt_stream_callbacks {
-	openmpt_stream_read_func read;
-	openmpt_stream_seek_func seek;
-	openmpt_stream_tell_func tell;
-} openmpt_stream_callbacks;
-*/
-
-/* NOTE
- *  The logging function can be overridden by a custom logging function in the OpenMPT library.
- *  Again, this is too complicated for OCaml... so it is not supported here.
- *  Use the default logging function instead.
- */
-//typedef void (*openmpt_log_func)( const char * message, void * user );
-
-// Default logging function
-//void openmpt_log_func_default( const char * message, void * user );
-
-// Silent logging function
-//void openmpt_log_func_silent( const char * message, void * user );
-
-/*! No error. \since 0.3.0 */
-#define OPENMPT_ERROR_OK                     0
-
-/*! Lowest value libopenmpt will use for any of its own error codes. \since 0.3.0 */
-#define OPENMPT_ERROR_BASE                   256
-
-/*! Unknown internal error. \since 0.3.0 */
-#define OPENMPT_ERROR_UNKNOWN                ( OPENMPT_ERROR_BASE +   1 )
-
-/*! Unknown internal C++ exception. \since 0.3.0 */
-#define OPENMPT_ERROR_EXCEPTION              ( OPENMPT_ERROR_BASE +  11 )
-
-/*! Out of memory. \since 0.3.0 */
-#define OPENMPT_ERROR_OUT_OF_MEMORY          ( OPENMPT_ERROR_BASE +  21 )
-
-/*! Runtime error. \since 0.3.0 */
-#define OPENMPT_ERROR_RUNTIME                ( OPENMPT_ERROR_BASE +  30 )
-/*! Range error. \since 0.3.0 */
-#define OPENMPT_ERROR_RANGE                  ( OPENMPT_ERROR_BASE +  31 )
-/*! Arithmetic overflow. \since 0.3.0 */
-#define OPENMPT_ERROR_OVERFLOW               ( OPENMPT_ERROR_BASE +  32 )
-/*! Arithmetic underflow. \since 0.3.0 */
-#define OPENMPT_ERROR_UNDERFLOW              ( OPENMPT_ERROR_BASE +  33 )
-
-/*! Logic error. \since 0.3.0 */
-#define OPENMPT_ERROR_LOGIC                  ( OPENMPT_ERROR_BASE +  40 )
-/*! Value domain error. \since 0.3.0 */
-#define OPENMPT_ERROR_DOMAIN                 ( OPENMPT_ERROR_BASE +  41 )
-/*! Maximum supported size exceeded. \since 0.3.0 */
-#define OPENMPT_ERROR_LENGTH                 ( OPENMPT_ERROR_BASE +  42 )
-/*! Argument out of range. \since 0.3.0 */
-#define OPENMPT_ERROR_OUT_OF_RANGE           ( OPENMPT_ERROR_BASE +  43 )
-/*! Invalid argument. \since 0.3.0 */
-#define OPENMPT_ERROR_INVALID_ARGUMENT       ( OPENMPT_ERROR_BASE +  44 )
-
-/*! General libopenmpt error. \since 0.3.0 */
-#define OPENMPT_ERROR_GENERAL                ( OPENMPT_ERROR_BASE + 101 )
-/*! openmpt_module * is invalid. \since 0.3.0 */
-#define OPENMPT_ERROR_INVALID_MODULE_POINTER ( OPENMPT_ERROR_BASE + 102 )
-/*! NULL pointer argument. \since 0.3.0 */
-#define OPENMPT_ERROR_ARGUMENT_NULL_POINTER  ( OPENMPT_ERROR_BASE + 103 )
-
 // Check whether the error is transient
 int openmpt_error_is_transient( [in] int error );
 
 // Convert error code to text
 [string] const char * openmpt_error_string( [in] int error )
 	quote(dealloc, "openmpt_free_string(_res); ");
+*/
 
-/*! Do not log or store the error. \since 0.3.0 */
-#define OPENMPT_ERROR_FUNC_RESULT_NONE    0
-/*! Log the error. \since 0.3.0 */
-#define OPENMPT_ERROR_FUNC_RESULT_LOG     ( 1 << 0 )
-/*! Store the error. \since 0.3.0 */
-#define OPENMPT_ERROR_FUNC_RESULT_STORE   ( 1 << 1 )
-/*! Log and store the error. \since 0.3.0 */
-#define OPENMPT_ERROR_FUNC_RESULT_DEFAULT ( OPENMPT_ERROR_FUNC_RESULT_LOG | OPENMPT_ERROR_FUNC_RESULT_STORE )
+/* ************************************************** */
+/* BUFFER INTERFACE */
 
-/* NOTE
- *  The error function can be overridden by a custom error function in the OpenMPT library.
- *  Again, this is too complicated for OCaml... so it is not supported here.
- *  Use the default error function instead.
- */
-//typedef int (*openmpt_error_func)( int error, void * user );
+// Forward declaration of struct
+quote(c, "void camlidl_stream_buffer_destroy(openmpt_stream_buffer * x) { free(x->file_data); free(x); }");
+typedef [abstract,finalize(camlidl_stream_buffer_destroy)] struct openmpt_stream_buffer openmpt_stream_buffer;
 
-// Default error function
-//int openmpt_error_func_default( int error, void * user );
-
-// Log error function
-//int openmpt_error_func_log( int error, void * user );
-
-// Store error function
-//int openmpt_error_func_store( int error, void * user );
-
-// Ignore error function
-//int openmpt_error_func_ignore( int error, void * user );
-
-// Errno error function
-//int openmpt_error_func_errno( int error, void * user );
-
-// User pointer for openmpt_error_func_errno
-//void * openmpt_error_func_errno_userdata( int * error );
+// stream_buffer maintains a pointer to file_data,
+//  we need to copy the block or it will get lost and segfault when used
+[ptr] openmpt_stream_buffer * openmpt_stream_buffer_init( [in] unsigned long long file_size, [in,string,size_is(file_size)] byte * file_data )
+	quote(call, "unsigned char *d = malloc(file_size); memcpy(d, file_data, file_size); _res = malloc(sizeof(openmpt_stream_buffer)); openmpt_stream_buffer_init(_res, d, file_size); ");
 
 // Roughly scan the input stream to find out whether libopenmpt might be able to open it
+double openmpt_could_open_probability_buffer( [in,ptr] openmpt_stream_buffer * stream, [in] double effort ) 
+	quote(call, " \
+		int error = 0; \
+		const char *error_message = NULL; \
+		_res = openmpt_could_open_probability2(openmpt_stream_get_buffer_callbacks(), stream, effort, &openmpt_log_func_default, NULL, &openmpt_error_func_default, NULL, &error, &error_message ); \
+		if (error) failwith(error_message); \
+	");
+
 //  Three versions of this are provided, one each for mem-buffer, file descriptor, and file struct.
-double openmpt_could_open_probability_buffer( [in] const unsigned char * stream, double effort, [out] int * error, [out,string] char * error_message )
-	quote(call, "openmpt_could_open_probability2(openmpt_stream_get_buffer_callbacks(), stream, effort, &libopenmpt_default_logfunc, NULL, &openmpt_error_func_default, NULL, error, &error_message ); ");
-double openmpt_could_open_probability_fd( [in] unsigned int stream, double effort, [out] int * error, [out,string] char * error_message )
+/* double openmpt_could_open_probability_fd( [in] unsigned int stream, double effort, [out,ref] int * error, [out,string] char * error_message )
 	quote(call, "openmpt_could_open_probability2(openmpt_stream_get_fd_callbacks(), &stream, effort, &libopenmpt_default_logfunc, NULL, &openmpt_error_func_default, NULL, error, &error_message ); ");
+*/
 /* double openmpt_could_open_probability_file( [in] FILE * stream, double effort, [out] int * error, [out,string] char * error_message )
 	quote(call, "openmpt_could_open_probability2(openmpt_stream_get_buffer_callbacks(), stream, effort, &libopenmpt_default_logfunc, NULL, &openmpt_error_func_default, NULL, error, &error_message ); "); */
 
 // Get recommended header size for successfull format probing
 unsigned int openmpt_probe_file_header_get_recommended_size();
 
+/* These are unfortunately broken in CamlIDL.  The typedef that is created must go in the header file,
+  unfortunately that leads to all manner of duplicate function names because of openmpt.h name collision */
 /*
-// Probe for module formats in openmpt_probe_file_header() or openmpt_probe_file_header_without_filesize(). \since 0.3.0
-#define OPENMPT_PROBE_FILE_HEADER_FLAGS_MODULES    0x1ul
-// Probe for module-specific container formats in openmpt_probe_file_header() or openmpt_probe_file_header_without_filesize(). \since 0.3.0
-#define OPENMPT_PROBE_FILE_HEADER_FLAGS_CONTAINERS 0x2ul
-
-// Probe for the default set of formats in openmpt_probe_file_header() or openmpt_probe_file_header_without_filesize(). \since 0.3.0
-#define OPENMPT_PROBE_FILE_HEADER_FLAGS_DEFAULT    ( OPENMPT_PROBE_FILE_HEADER_FLAGS_MODULES | OPENMPT_PROBE_FILE_HEADER_FLAGS_CONTAINERS )
-// Probe for no formats in openmpt_probe_file_header() or openmpt_probe_file_header_without_filesize(). \since 0.3.0
-#define OPENMPT_PROBE_FILE_HEADER_FLAGS_NONE       0x0ul
-
-// Possible return values fo openmpt_probe_file_header() and openmpt_probe_file_header_without_filesize(). \since 0.3.0
-#define OPENMPT_PROBE_FILE_HEADER_RESULT_SUCCESS      1
-// Possible return values fo openmpt_probe_file_header() and openmpt_probe_file_header_without_filesize(). \since 0.3.0
-#define OPENMPT_PROBE_FILE_HEADER_RESULT_FAILURE      0
-// Possible return values fo openmpt_probe_file_header() and openmpt_probe_file_header_without_filesize(). \since 0.3.0
-#define OPENMPT_PROBE_FILE_HEADER_RESULT_WANTMOREDATA (-1)
-// Possible return values fo openmpt_probe_file_header() and openmpt_probe_file_header_without_filesize(). \since 0.3.0
-#define OPENMPT_PROBE_FILE_HEADER_RESULT_ERROR        (-255)
+enum probe_file_header {
+	OPENMPT_PROBE_FILE_HEADER_FLAGS_NONE=0,
+	OPENMPT_PROBE_FILE_HEADER_FLAGS_MODULES = 1,
+	OPENMPT_PROBE_FILE_HEADER_FLAGS_CONTAINERS = 2,
+	OPENMPT_PROBE_FILE_HEADER_FLAGS_DEFAULT = 3
+};
+typedef [set] enum probe_file_header probe_file_headerset;
 */
+/* Instead use the DEFINE method */
+#ifndef OPENMPT_PROBE_FILE_HEADER_FLAGS_DEFAULT
+	#define OPENMPT_PROBE_FILE_HEADER_FLAGS_MODULES    0x1ul
+	#define OPENMPT_PROBE_FILE_HEADER_FLAGS_CONTAINERS 0x2ul
+	#define OPENMPT_PROBE_FILE_HEADER_FLAGS_DEFAULT    ( OPENMPT_PROBE_FILE_HEADER_FLAGS_MODULES | OPENMPT_PROBE_FILE_HEADER_FLAGS_CONTAINERS )
+	#define OPENMPT_PROBE_FILE_HEADER_FLAGS_NONE       0x0ul
+#endif
 
-/*! \brief Probe the provided bytes from the beginning of a file for supported file format headers to find out whether libopenmpt might be able to open it
- *
- * \param flags Ored mask of OPENMPT_PROBE_FILE_HEADER_FLAGS_MODULES and OPENMPT_PROBE_FILE_HEADER_FLAGS_CONTAINERS, or OPENMPT_PROBE_FILE_HEADER_FLAGS_DEFAULT.
- * \param data Beginning of the file data.
- * \param size Size of the beginning of the file data.
- * \param filesize Full size of the file data on disk.
- * \param logfunc Logging function where warning and errors are written. May be NULL.
- * \param loguser Logging function user context. Used to pass any user-defined data associated with this module to the logging function.
- * \param errfunc Error function to define error behaviour. May be NULL.
- * \param erruser Error function user context. Used to pass any user-defined data associated with this module to the logging function.
- * \param error Pointer to an integer where an error may get stored. May be NULL.
- * \param error_message Pointer to a string pointer where an error message may get stored. May be NULL.
- * \remarks It is recommended to provide openmpt_probe_file_header_get_recommended_size() bytes of data for data and size. If the file is smaller, only provide the filesize amount and set size and filesize to the file's size. 
- * \remarks openmpt_could_open_probability2() provides a more elaborate interface that might be required for special use cases. It is recommended to use openmpt_probe_file_header() though, if possible.
- * \retval OPENMPT_PROBE_FILE_HEADER_RESULT_SUCCESS The file will most likely be supported by libopenmpt.
- * \retval OPENMPT_PROBE_FILE_HEADER_RESULT_FAILURE The file is not supported by libopenmpt.
- * \retval OPENMPT_PROBE_FILE_HEADER_RESULT_WANTMOREDATA An answer could not be determined with the amount of data provided.
- * \retval OPENMPT_PROBE_FILE_HEADER_RESULT_ERROR An internal error occurred.
- * \sa openmpt_probe_file_header_get_recommended_size()
- * \sa openmpt_probe_file_header_without_filesize()
- * \sa openmpt_probe_file_header_from_stream()
- * \sa openmpt_could_open_probability2()
- * \since 0.3.0
- */
-int openmpt_probe_file_header( unsigned int64 flags, const void * data, size_t size, unsigned int64 filesize, openmpt_log_func logfunc, void * loguser, openmpt_error_func errfunc, void * erruser, int * error, const char * * error_message );
-/*! \brief Probe the provided bytes from the beginning of a file for supported file format headers to find out whether libopenmpt might be able to open it
- *
- * \param flags Ored mask of OPENMPT_PROBE_FILE_HEADER_FLAGS_MODULES and OPENMPT_PROBE_FILE_HEADER_FLAGS_CONTAINERS, or OPENMPT_PROBE_FILE_HEADER_FLAGS_DEFAULT.
- * \param data Beginning of the file data.
- * \param size Size of the beginning of the file data.
- * \param logfunc Logging function where warning and errors are written. May be NULL.
- * \param loguser Logging function user context. Used to pass any user-defined data associated with this module to the logging function.
- * \param errfunc Error function to define error behaviour. May be NULL.
- * \param erruser Error function user context. Used to pass any user-defined data associated with this module to the logging function.
- * \param error Pointer to an integer where an error may get stored. May be NULL.
- * \param error_message Pointer to a string pointer where an error message may get stored. May be NULL.
- * \remarks It is recommended to use openmpt_probe_file_header() and provide the acutal file's size as a parameter if at all possible. libopenmpt can provide more accurate answers if the filesize is known.
- * \remarks It is recommended to provide openmpt_probe_file_header_get_recommended_size() bytes of data for data and size. If the file is smaller, only provide the filesize amount and set size to the file's size. 
- * \remarks openmpt_could_open_probability2() provides a more elaborate interface that might be required for special use cases. It is recommended to use openmpt_probe_file_header() though, if possible.
- * \retval OPENMPT_PROBE_FILE_HEADER_RESULT_SUCCESS The file will most likely be supported by libopenmpt.
- * \retval OPENMPT_PROBE_FILE_HEADER_RESULT_FAILURE The file is not supported by libopenmpt.
- * \retval OPENMPT_PROBE_FILE_HEADER_RESULT_WANTMOREDATA An answer could not be determined with the amount of data provided.
- * \retval OPENMPT_PROBE_FILE_HEADER_RESULT_ERROR An internal error occurred.
- * \sa openmpt_probe_file_header_get_recommended_size()
- * \sa openmpt_probe_file_header()
- * \sa openmpt_probe_file_header_from_stream()
- * \sa openmpt_could_open_probability2()
- * \since 0.3.0
- */
-int openmpt_probe_file_header_without_filesize( unsigned int64 flags, const void * data, size_t size, openmpt_log_func logfunc, void * loguser, openmpt_error_func errfunc, void * erruser, int * error, const char * * error_message );
+#ifndef OPENMPT_PROBE_FILE_HEADER_RESULT_SUCCESS
+	#define OPENMPT_PROBE_FILE_HEADER_RESULT_SUCCESS      1
+	#define OPENMPT_PROBE_FILE_HEADER_RESULT_FAILURE      0
+	#define OPENMPT_PROBE_FILE_HEADER_RESULT_WANTMOREDATA (-1)
+	#define OPENMPT_PROBE_FILE_HEADER_RESULT_ERROR        (-255)
+#endif
 
+// Probe the provided bytes from the beginning of a file for supported file format headers to find out whether libopenmpt might be able to open it
+//int openmpt_probe_file_header( [in] enum enum_probe_file_header flags, [in, size_is(data_size)] byte * data, [in] unsigned int data_size, [in] unsigned long long file_size, [out,ref] int * error, [out,string*] char ** error_message )
+int openmpt_probe_file_header( [in] unsigned int flags, [in, size_is(data_size)] byte * data, [in] unsigned int data_size, [in] unsigned long long file_size )
+	quote(call, " \
+		int error = 0; \
+		const char *error_message = NULL; \
+		_res = openmpt_probe_file_header(flags, data, data_size, file_size, &openmpt_log_func_default, NULL, &openmpt_error_func_default, NULL, &error, &error_message ); \
+		if (error) failwith(error_message); \
+	");
+
+// Probe the provided bytes from the beginning of a file for supported file format headers to find out whether libopenmpt might be able to open it
+int openmpt_probe_file_header_without_filesize( [in] unsigned int flags, [in, size_is(data_size)] byte * data, [in] unsigned int data_size )
+	quote(call, " \
+		int error = 0; \
+		const char *error_message = NULL; \
+		_res = openmpt_probe_file_header_without_filesize(flags, data, data_size, &openmpt_log_func_default, NULL, &openmpt_error_func_default, NULL, &error, &error_message ); \
+		if (error) failwith(error_message); \
+	");
+
+#if 0
 /*! \brief Probe the provided bytes from the beginning of a file for supported file format headers to find out whether libopenmpt might be able to open it
  *
  * \param flags Ored mask of OPENMPT_PROBE_FILE_HEADER_FLAGS_MODULES and OPENMPT_PROBE_FILE_HEADER_FLAGS_CONTAINERS, or OPENMPT_PROBE_FILE_HEADER_FLAGS_DEFAULT.
